@@ -1,2 +1,3 @@
 # MailSystem
-SMTP POPS
+SMTP POPS Qt
+
