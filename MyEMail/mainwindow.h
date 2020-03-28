@@ -18,18 +18,16 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-private:
     Ui::MainWindow *ui;
     QString senderMail; //发送方邮箱地址
+    QString senderName;//发送方@前名字
     QString authCode; //发送方邮箱授权码
     QString receiveMail; //接收方邮箱地址
-
-    QString title; //邮件标题
-    QString content; //邮件正文
-    QString expectedReply; //期待收到的应答
-    void (QMainWindow::*nextAction)(); //收到正确应答后下一步要执行的方法
+    //void (QMainWindow::*nextAction)(); //收到正确应答后下一步要执行的方法
     QTcpSocket *tcpSocket1;
+    QTcpSocket *tcpSocket2;
+private:
+
 
 };
 #endif // MAINWINDOW_H

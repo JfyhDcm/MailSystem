@@ -8,6 +8,9 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "mainwindow.h"
+
+extern bool haveconnected;
+
 namespace Ui {
 class LoginIn;
 }
@@ -25,6 +28,7 @@ private:
     QString account,password;
     MainWindow *mw;
     QString senderMail; //发送方邮箱地址
+    QString senderName;//发送方@前名字
     QString authCode; //发送方邮箱授权码
     QString receiveMail; //接收方邮箱地址
 
@@ -32,16 +36,23 @@ private:
     QString content; //邮件正文
     QString expectedReply; //期待收到的应答
     void (LoginIn::*nextAction)(); //收到正确应答后下一步要执行的方法
-    QTcpSocket *tcpSocket1;
+    QTcpSocket *tcpSocket1;//smtp
+    QTcpSocket *tcpSocket2;//pop3
+    bool havesendfail;
 
     void sendHelo();
-    void checkConnectState();
+    void checkConnectState1();
+    void checkConnectState2();
     void sendAuthLogin();
     void sendUser();
     void sendPassword();
     void loginsuccessful();
+    void connecttopop3();
+    void sendUserName();
+    void sendPass();
 private slots:
-    void readyReadSlot();
+    void readyReadSlot1();
+    void readyReadSlot2();
 };
 
 #endif // LOGININ_H
