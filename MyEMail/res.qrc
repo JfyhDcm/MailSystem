@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/qss">
+        <file>QSS/AMOLED.qss</file>
+        <file>QSS/Aqua.qss</file>
+        <file>QSS/ConsoleStyle.qss</file>
+        <file>QSS/ElegantDark.qss</file>
+        <file>QSS/LICENSE</file>
+        <file>QSS/ManjaroMix.qss</file>
+        <file>QSS/MaterialDark.qss</file>
+        <file>QSS/README.md</file>
+        <file>QSS/Ubuntu.qss</file>
+    </qresource>
+    <qresource prefix="/icon">
+        <file>ICON/login.jpeg</file>
+        <file>ICON/loginbg.png</file>
+        <file>ICON/loginbg2.png</file>
+        <file>ICON/loginicon.png</file>
+    </qresource>
+</RCC>
