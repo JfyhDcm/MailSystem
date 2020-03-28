@@ -1,3 +1,5 @@
+*.DS_Store
+
 # C++ objects and libs
 *.slo
 *.lo
@@ -9,7 +11,7 @@
 *.so.*
 *.dll
 *.dylib
-*.DS_Store
+
 
 # Qt-es
 object_script.*.Release
