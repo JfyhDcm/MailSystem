@@ -1,2 +1,0 @@
-# MailSystem
-SMTP:
