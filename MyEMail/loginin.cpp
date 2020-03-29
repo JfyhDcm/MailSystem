@@ -16,6 +16,7 @@ LoginIn::LoginIn(QWidget *parent) :
 QPushButton::hover{border-color: black;}\
 QPushButton::pressed{border-color: cyan;}");
     this->mw=new MainWindow;
+            //this->mw->show();
     havesendfail=false;
     connect(ui->pushButton,&QPushButton::clicked,[=](){
         if(ui->lineEdit_1->text().isEmpty()||ui->lineEdit_2->text().isEmpty())
@@ -43,7 +44,7 @@ QPushButton::pressed{border-color: cyan;}");
             connect(tcpSocket1, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot1);
             tcpSocket1->connectToHost("smtp.qq.com", 25);
             QTimer *timelimit=new QTimer(this);
-            timelimit->start(5000);
+            timelimit->start(10000);
             connect(timelimit,&QTimer::timeout,[=](){
                 if(!haveconnected&&!havesendfail)
                 {
@@ -78,7 +79,6 @@ void LoginIn::readyReadSlot1()
     else{
         havesendfail=true;
         QMessageBox::warning(this, "提示", "失败1!");
-
     }
 }
 void LoginIn::checkConnectState1()
@@ -178,6 +178,7 @@ void LoginIn::loginsuccessful()
     this->mw->receiveMail=this->receiveMail; //接收方邮箱地址
     this->mw->tcpSocket1=this->tcpSocket1;//smtp
     this->mw->tcpSocket2=this->tcpSocket2;//pop3
+    this->mw->anotherMainWindow();
     haveconnected=true;
     this->close();
     this->mw->show();
