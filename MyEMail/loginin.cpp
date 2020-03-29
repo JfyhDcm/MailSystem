@@ -10,6 +10,7 @@ LoginIn::LoginIn(QWidget *parent) :
     ui(new Ui::LoginIn)
 {
     ui->setupUi(this);
+    this->setWindowIcon(QPixmap(":/icon/ICON/ficon.png"));
     ui->lineEdit_1->setStyleSheet("QLineEdit{background-color:transparent}");
     ui->lineEdit_2->setStyleSheet("QLineEdit{background-color:transparent}");
     ui->pushButton->setStyleSheet("QPushButton{border-style:groove;border-width: 1px;border-color: white;background:transparent;border-radius: 20px;}\
@@ -23,7 +24,10 @@ QPushButton::pressed{border-color: cyan;}");
     connect(ui->pushButton,&QPushButton::clicked,[=](){
         if(ui->lineEdit_1->text().isEmpty()||ui->lineEdit_2->text().isEmpty())
         {
-            qDebug()<<"密码或账号缺失";
+            if(ui->lineEdit_2->text().isEmpty())
+            QMessageBox::warning(this, "提示", "请输入密码!");
+            else
+            QMessageBox::warning(this, "提示", "请输入账号!");
         }
         else
         {
@@ -97,7 +101,7 @@ void LoginIn::readyReadSlot1()
     }
     else{
         havesendfail=true;
-        QMessageBox::warning(this, "提示", "失败1!");
+        QMessageBox::warning(this, "提示", "连接失败1!");
     }
 }
 void LoginIn::checkConnectState1()
@@ -154,7 +158,7 @@ void LoginIn::readyReadSlot2()
         }
     }
     else{
-        QMessageBox::warning(this, "提示", "失败3!");
+        QMessageBox::warning(this, "提示", "连接失败3!");
         havesendfail=true;
     }
 }

@@ -17,5 +17,6 @@
         <file>ICON/loginicon.png</file>
         <file>ICON/messageicon.jpeg</file>
         <file>ICON/messicon.png</file>
+        <file>ICON/ficon.png</file>
     </qresource>
 </RCC>

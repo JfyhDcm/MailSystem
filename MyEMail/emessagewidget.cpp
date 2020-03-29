@@ -21,12 +21,14 @@ void EMessageWidget::anotherEMessage()
     ui->label_2->setText(static_cast<QString>(numByte.toInt()/1024)+"KB");
     else if(numByte.toInt()<1024*1024*1024)
     ui->label_2->setText(static_cast<QString>(numByte.toInt()/(1024*1024))+"MB");
+
     connect(ui->pushButton_2,&QPushButton::clicked,[=](){
         QString str="dele "+QString::number(order)+" \r\n";
         qDebug()<<"向服务器发送：　" + str;
         tcpSocket2->write(str.toLatin1());
         connect(tcpSocket2, &QTcpSocket::readyRead,this, &EMessageWidget::deleJudge);
     });
+
     connect(ui->pushButton_1,&QPushButton::clicked,[=](){
         // 读取信件=
         QString str="top "+QString::number(order)+" \r\n";
@@ -57,6 +59,7 @@ void EMessageWidget::deleJudge()
 }
 void EMessageWidget::readMessage()
 {
+    disconnect(tcpSocket2, &QTcpSocket::readyRead,this, &EMessageWidget::readMessage);
     QByteArray buffer = tcpSocket2->readAll();
     qDebug()<<"收到服务器回复："<<buffer;
     QString str=buffer;
@@ -76,8 +79,6 @@ void EMessageWidget::readMessage()
             break;
 
     k=str.indexOf("To: ",0);
-//    for(int i=k+QString("To: ").length();i<k+QString("To: ").length()+10;i++)
-//        qDebug()<<str[i];
     for(int i=k+QString("To: ").length();;i++)
         if(str[i]!=' ')
             this->topTo+=str[i];
@@ -94,6 +95,5 @@ void EMessageWidget::readMessage()
     for(int i=k;i<str.length();i++)
             this->topContents+=str[i];
     this->topContents=this->topContents.left(this->topContents.length()-5);
-    //qDebug()<<this->topFrom<<this->topTo<<this->topSubject<<this->topContents;
     emit allHaveread();
 }

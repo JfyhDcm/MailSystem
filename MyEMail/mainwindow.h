@@ -43,7 +43,7 @@ private:
     QWidget *scrollCanvas;
 private slots:
     void readyReadSlot1();
-    void readyReadSlot2();
+    //void readyReadSlot2();
     void getNum();
     void drawMessage();
 

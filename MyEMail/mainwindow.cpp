@@ -24,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::anotherMainWindow()
 {
-    this->setWindowIcon(QPixmap(":/icon/ICON/loginicon.png"));
+    this->setWindowIcon(QPixmap(":/icon/ICON/ficon.png"));
     ui->stackedWidget->setCurrentIndex(0);
     ui->lineEdit_1->setText(this->senderMail);
     connect(ui->pushButton_1,&QPushButton::clicked,[=](){
@@ -44,6 +44,8 @@ void MainWindow::anotherMainWindow()
         ui->stackedWidget->setCurrentIndex(0);
     });
     connect(ui->pushButton_3,&QPushButton::clicked,[=](){
+//        if(this->scrollCanvas)
+//        this->scrollCanvas->close();
         QString str = "stat \r\n";
         qDebug()<<"向服务器2发送：　" + str;
         tcpSocket2->write(str.toLatin1());
@@ -91,7 +93,7 @@ void MainWindow::sendSuccessfully()
     disconnect(tcpSocket1, &QTcpSocket::readyRead,this, &MainWindow::readyReadSlot1);
     ui->lineEdit_3->setText("");
     ui->textEdit->setText("");
-    qDebug()<<"send message successfully!";
+    QMessageBox::warning(this, "提示", "发送成功!");
 }
 void MainWindow::readyReadSlot1()
 {
@@ -104,12 +106,9 @@ void MainWindow::readyReadSlot1()
         QMessageBox::warning(this, "提示", "失败5!");
     }
 }
-void MainWindow::readyReadSlot2()
-{
-    qDebug()<<"draw!";
-}
 void MainWindow::getNum()
 {
+    qDebug()<<"enter!";
     QString num="",str;
     QByteArray buffer = tcpSocket2->readAll();
     str=QString(buffer);
@@ -121,6 +120,7 @@ void MainWindow::getNum()
             num+=str[i];
     }
     this->messageNum=num.toInt();
+    qDebug()<<"NUM!!!";
     //qDebug()<<this->messageNum;
     disconnect(tcpSocket2, &QTcpSocket::readyRead,this, &MainWindow::getNum);
     str = "list \r\n";
