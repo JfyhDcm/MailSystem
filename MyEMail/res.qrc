@@ -15,5 +15,7 @@
         <file>ICON/loginbg.png</file>
         <file>ICON/loginbg2.png</file>
         <file>ICON/loginicon.png</file>
+        <file>ICON/messageicon.jpeg</file>
+        <file>ICON/messicon.png</file>
     </qresource>
 </RCC>

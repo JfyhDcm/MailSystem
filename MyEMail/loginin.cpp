@@ -18,6 +18,8 @@ QPushButton::pressed{border-color: cyan;}");
     this->mw=new MainWindow;
             //this->mw->show();
     havesendfail=false;
+    smtpisok=false;
+    pop3isok=false;
     connect(ui->pushButton,&QPushButton::clicked,[=](){
         if(ui->lineEdit_1->text().isEmpty()||ui->lineEdit_2->text().isEmpty())
         {
@@ -27,8 +29,11 @@ QPushButton::pressed{border-color: cyan;}");
         {
             this->tcpSocket1 = new QTcpSocket(this);
             this->tcpSocket2 = new QTcpSocket(this);
-            this->nextAction = &LoginIn::checkConnectState1;
-            this->expectedReply="220";
+
+            connect(this,&LoginIn::smtpisokf,this,&LoginIn::loginsuccessful);
+            connect(this,&LoginIn::pop3isokf,this,&LoginIn::loginsuccessful);
+
+
             //this->senderMail=ui->lineEdit_1->text();
             this->senderMail="836439982@qq.com";
             //this->authCode=ui->lineEdit_2->text();
@@ -41,8 +46,18 @@ QPushButton::pressed{border-color: cyan;}");
                 else
                     break;
 
+            this->nextAction1 = &LoginIn::checkConnectState1;
+            this->expectedReply1="220";
+            this->expectedReply2 = "OK";
+            this->nextAction2 =&LoginIn::checkConnectState2;
+
             connect(tcpSocket1, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot1);
             tcpSocket1->connectToHost("smtp.qq.com", 25);
+            connect(tcpSocket2, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot2);
+            tcpSocket2->connectToHost("pop.qq.com", 110);
+
+
+
             QTimer *timelimit=new QTimer(this);
             timelimit->start(10000);
             connect(timelimit,&QTimer::timeout,[=](){
@@ -73,8 +88,12 @@ void LoginIn::readyReadSlot1()
 {
     QByteArray buffer = tcpSocket1->readAll();
     qDebug()<<"收到服务器回复："<<buffer;
-    if(buffer.contains(this->expectedReply.toLatin1())){
-        if(nextAction) (this->*nextAction)();
+    if(buffer.contains(this->expectedReply1.toLatin1())){
+        if(nextAction1) (this->*nextAction1)();
+        else{
+            smtpisok=true;
+            emit smtpisokf();
+        }
     }
     else{
         havesendfail=true;
@@ -96,51 +115,48 @@ void LoginIn::sendHelo()
     QString str = "helo qq.com\r\n";
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket1->write(str.toLatin1());
-    this->expectedReply = "250";
-    this->nextAction = &LoginIn::sendAuthLogin;
+    this->expectedReply1 = "250";
+    this->nextAction1 = &LoginIn::sendAuthLogin;
 }
 void LoginIn::sendAuthLogin()
 {
     QString str = "auth login\r\n";
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket1->write(str.toLatin1());
-    this->expectedReply = "334";
-    this->nextAction = &LoginIn::sendUser;
+    this->expectedReply1 = "334";
+    this->nextAction1 = &LoginIn::sendUser;
 }
 void LoginIn::sendUser()
 {
     QString str = QString("\r\n").prepend(senderMail.toLatin1().toBase64());
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket1->write(str.toLatin1());
-    this->expectedReply = "334 ";
-    this->nextAction = &LoginIn::sendPassword;
+    this->expectedReply1 = "334 ";
+    this->nextAction1 = &LoginIn::sendPassword;
 }
 void LoginIn::sendPassword()
 {
     QString str = QString("\r\n").prepend(authCode.toLatin1().toBase64());
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket1->write(str.toLatin1());
-    this->expectedReply = "235";
-    this->nextAction =&LoginIn::connecttopop3; //&LoginIn::sendMailFrom;
+    this->expectedReply1 = "235";
+    this->nextAction1 =NULL;
 }
 void LoginIn::readyReadSlot2()
 {
     QByteArray buffer = tcpSocket2->readAll();
     qDebug()<<"收到服务器回复："<<buffer;
-    if(buffer.contains(this->expectedReply.toLatin1())){
-        if(nextAction) (this->*nextAction)();
+    if(buffer.contains(this->expectedReply2.toLatin1())){
+        if(nextAction2) (this->*nextAction2)();
+        else{
+            pop3isok=true;
+            emit pop3isokf();
+        }
     }
     else{
         QMessageBox::warning(this, "提示", "失败3!");
         havesendfail=true;
     }
-}
-void LoginIn::connecttopop3()
-{
-    tcpSocket2->connectToHost("pop.qq.com", 110);
-    connect(tcpSocket2, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot2);
-    this->expectedReply = "OK";
-    this->nextAction =&LoginIn::checkConnectState2;
 }
 void LoginIn::checkConnectState2()
 {
@@ -157,19 +173,22 @@ void LoginIn::sendUserName()
     QString str = "user "+this->senderName+"\r\n";
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket2->write(str.toLatin1());
-    this->expectedReply = "OK";
-    this->nextAction = &LoginIn::sendPass;
+    this->expectedReply2 = "OK";
+    this->nextAction2 = &LoginIn::sendPass;
 }
 void LoginIn::sendPass()
 {
     QString str = "pass "+this->authCode+"\r\n";
     qDebug()<<"向服务器发送：　" + str;
     tcpSocket2->write(str.toLatin1());
-    this->expectedReply = "OK";
-    this->nextAction = &LoginIn::loginsuccessful;
+    this->expectedReply2 = "OK";
+    this->nextAction2 = NULL;
+
 }
 void LoginIn::loginsuccessful()
 {
+    if(!smtpisok||!pop3isok)
+        return;
     disconnect(tcpSocket1, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot1);
     disconnect(tcpSocket2, &QTcpSocket::readyRead,this, &LoginIn::readyReadSlot2);
     this->mw->senderMail=this->senderMail; //发送方邮箱地址
@@ -178,8 +197,9 @@ void LoginIn::loginsuccessful()
     this->mw->receiveMail=this->receiveMail; //接收方邮箱地址
     this->mw->tcpSocket1=this->tcpSocket1;//smtp
     this->mw->tcpSocket2=this->tcpSocket2;//pop3
-    this->mw->anotherMainWindow();
+
     haveconnected=true;
-    this->close();
+    this->hide();
     this->mw->show();
+    this->mw->anotherMainWindow();
 }

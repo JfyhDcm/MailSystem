@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QString>
+#include "emessagewidget.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -37,9 +38,14 @@ private:
     void sendMailFrom();
     void sendMailTo();
     void sendSuccessfully();
+
+    int messageNum;
+    QWidget *scrollCanvas;
 private slots:
     void readyReadSlot1();
     void readyReadSlot2();
+    void getNum();
+    void drawMessage();
 
 };
 #endif // MAINWINDOW_H

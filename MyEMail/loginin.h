@@ -34,25 +34,30 @@ private:
 
     QString title; //邮件标题
     QString content; //邮件正文
-    QString expectedReply; //期待收到的应答
-    void (LoginIn::*nextAction)(); //收到正确应答后下一步要执行的方法
+    QString expectedReply1; //期待收到的应答
+    QString expectedReply2; //期待收到的应答
+    void (LoginIn::*nextAction1)(); //收到正确应答后下一步要执行的方法
+    void (LoginIn::*nextAction2)(); //收到正确应答后下一步要执行的方法
     QTcpSocket *tcpSocket1;//smtp
     QTcpSocket *tcpSocket2;//pop3
     bool havesendfail;
-
+    bool smtpisok;
+    bool pop3isok;
     void sendHelo();
     void checkConnectState1();
     void checkConnectState2();
     void sendAuthLogin();
     void sendUser();
-    void sendPassword();
-    void loginsuccessful();
-    void connecttopop3();
+    void sendPassword(); 
     void sendUserName();
     void sendPass();
 private slots:
     void readyReadSlot1();
     void readyReadSlot2();
+    void loginsuccessful();
+signals:
+    void smtpisokf();
+    void pop3isokf();
 };
 
 #endif // LOGININ_H
