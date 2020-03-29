@@ -38,10 +38,10 @@ QPushButton::pressed{border-color: cyan;}");
             connect(this,&LoginIn::pop3isokf,this,&LoginIn::loginsuccessful);
 
 
-            //this->senderMail=ui->lineEdit_1->text();
-            this->senderMail="836439982@qq.com";
-            //this->authCode=ui->lineEdit_2->text();
-            this->authCode="aydqwcqhajjvbfih";
+            this->senderMail=ui->lineEdit_1->text();
+            //this->senderMail="836439982@qq.com";
+            this->authCode=ui->lineEdit_2->text();
+            //this->authCode="aydqwcqhajjvbfih";
 
             this->senderName="";
             for(int i=0;i<this->senderMail.length();i++)
