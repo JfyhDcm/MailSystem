@@ -24,10 +24,10 @@ QPushButton::pressed{border-color: cyan;}");
     connect(ui->pushButton,&QPushButton::clicked,[=](){
         if(ui->lineEdit_1->text().isEmpty()||ui->lineEdit_2->text().isEmpty())
         {
-            if(ui->lineEdit_2->text().isEmpty())
-            QMessageBox::warning(this, "提示", "请输入密码!");
-            else
+            if(ui->lineEdit_1->text().isEmpty())
             QMessageBox::warning(this, "提示", "请输入账号!");
+            else
+            QMessageBox::warning(this, "提示", "请输入密码!");
         }
         else
         {

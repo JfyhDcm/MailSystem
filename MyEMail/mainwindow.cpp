@@ -31,6 +31,7 @@ void MainWindow::anotherMainWindow()
         if(ui->label_2->text().isEmpty()||ui->label_3->text().isEmpty()||\
                 ui->label_3->text().isEmpty()||ui->textEdit->toPlainText().isEmpty()){
             qDebug()<<"请将信件填写完整！";
+            QMessageBox::warning(this, "提示", "请将信件填写完整!");
                       return;
         }
         this->receiveMail=ui->lineEdit_2->text();
